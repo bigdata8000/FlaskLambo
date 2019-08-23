@@ -1,0 +1,257 @@
+WEB:
+https://www.youtube.com/watch?v=w25ea_I89iM&list=LLJiIr7olRMdVql_0IDpomaQ&index=2&t=0s
+
+CODE:
+https://github.com/bradtraversy/python_feedback_app
+----------------------------------
+
+Summary:
+	Feedback form.
+	Frontend = Flask.
+	Backend = Postgresql.
+	Other = email integration. // na
+	Webhosting = Heroku.
+
+----------------------------------
+
+
+In VSC, open terminal, with [bash] selected, make sure [pip] in installed.
+### pip install pipenv  
+
+now run the env shell
+### pipenv shell
+
+This will create a 'Pipfile'
+Now, check the Python version, type:
+### python --version
+
+Now install flask, type:
+### pipenv install flask
+
+and install psycopg2 (Postgresql connector), type:
+### pipenv install psycopg2
+and
+### pipenv install psycopg2-binary
+
+Now install sqlalchemy type:
+### pipenv install flask-sqlalchemy
+
+Last, install gunicorn, type:
+### pipenv install gunicorn
+
+in, View - command pallette, type to select, python intepreter
+and select the virtual environment for this folder.
+
+
+----------------------------------
+
+Create 2 folders:
+1 = templates
+1 = static, this folder has 2 files: logo and css
+
+In templates, 2 files: index.html and success.html
+In index.html, create boiler plate, type in ! and press enter.
+
+update,<title>
+link css:
+### <link rel="stylesheet" href="../static/style.css">
+
+inside the body, create div called: container
+### <div class="container">
+
+add image:
+### <img src="../static/logo.png" alt="Lexus" class="logo">
+
+form 
+<form action="/submit" method="POST">
+
+
+----------------------------------
+
+
+
+(00:11:00) - app.py
+Create this file at root directory.
+
+with the necessary commands, in terminal, run flask server:
+### python app.py
+
+
+----------------------------------
+
+(00:17:00) - database
+First install POSTGresql with PGAdmin.
+Create new db called [lexus] or [lambo]
+
+Code for development environment:
+
+/// 
+ENV = 'dev'
+
+if ENV == 'dev':
+    app.debug = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:dimsum99@localhost/lambo'
+else:
+    app.debug = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = ''
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+///
+
+
+
+
+now the database object:
+
+
+///
+class LamFeedBack(db.Model):
+    __tablename__ = 'feedback'
+    id = db.Column(db.Integer, primary_key=True)
+    customer = db.Column(db.String(200), unique=True)
+    dealer = db.Column(db.String(200))
+    rating = db.Column(db.Integer)
+    comments = db.Column(db.Text())
+
+    def __init__(self, customer, dealer, rating, comments):
+        self.customer = customer
+        self.dealer = dealer
+        self.rating = rating
+        self.comments = comments
+///
+
+
+
+
+
+----------------------------------
+
+(00:25:00) - Generate the db table in PostgreSQL from model created
+In cmd, go into Python,
+### python
+### from app import db 
+### db.create_all()
+### exit()
+
+and re'activate server by
+### python app.py
+
+
+Test the form and check if the data has been added to the db.
+
+
+
+----------------------------------
+
+(00:38:00) - Deploy to Heroku
+create an account.
+Download heroku-cli
+
+create at root directory, a following file [ .gitignore ]
+and the following line:
+
+### .vscode
+### __pychache__
+
+check if heroku is installed, type:
+### heroku --version
+
+login via website
+### heroku login
+### heroku create lambofeedback  //  or find postgresql db and add-on.
+### heroku config --app lambofeedback  //  open the app, click on db, settings, look under URI.
+
+
+in app.py
+!!! copy and paste this info to: the production db URI.
+
+and change the ENV = 'prod'
+
+
+At root dir, add a file called [Procfile]
+Inside, copy the below:
+### web: gunicorn app:app
+
+
+also at root, add file: runtime.txt, with the below:
+### python-3.7.2
+
+
+create a requirements file:
+### pip freeze > requirements.txt
+
+
+Create git:
+### git init
+
+
+add everything to git repo:
+### git add . && git commit -m 'Initial deploy'
+
+
+and deploy:
+### heroku git:remote -a lambofeedback
+
+and push:
+### git push heroku master
+
+open the web
+### heroku open
+
+this has the front end of the app.
+
+
+///////////////////////
+(00:50:00) - CREATE DB in Heroku
+
+Still logged in to heroku, in VSC terminal: cmd, type:
+### heroku run python
+
+### from app import db
+
+### db.create_all()
+
+### exit()
+
+----------------------
+
+Create connection via PGAdmin ...
+
+END.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
